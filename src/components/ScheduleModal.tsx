@@ -14,25 +14,30 @@ export function ScheduleModal({ isOpen, onClose, onBookingCreated }: ScheduleMod
   const containerRef = useRef<HTMLDivElement>(null);
   const [isScriptReady, setIsScriptReady] = useState(false);
 
-  // ── Check if Cal.com script is loaded ──────────────────────────────────────
+  // ── Load Cal.com script if not already present ────────────────────────────
   useEffect(() => {
     const checkScript = () => {
-      const calScript = document.querySelector('script[src="https://app.cal.com/embed.js"]');
+      const calScript = document.querySelector(
+        'script[src="https://app.cal.com/embed.js"]'
+      );
       if (calScript) {
         setIsScriptReady(true);
         console.log("✅ Cal.com script is loaded");
-      } else {
-        console.warn("⚠️ Cal.com script not found. Make sure it's in your layout.");
-        // Try to load it dynamically as fallback
-        const script = document.createElement("script");
-        script.src = "https://app.cal.com/embed.js";
-        script.async = true;
-        script.onload = () => {
-          setIsScriptReady(true);
-          console.log("✅ Cal.com script loaded dynamically");
-        };
-        document.body.appendChild(script);
+        return;
       }
+
+      // Dynamically load script
+      const script = document.createElement("script");
+      script.src = "https://app.cal.com/embed.js";
+      script.async = true;
+      script.onload = () => {
+        setIsScriptReady(true);
+        console.log("✅ Cal.com script loaded dynamically");
+      };
+      script.onerror = () => {
+        console.error("❌ Failed to load Cal.com script");
+      };
+      document.body.appendChild(script);
     };
 
     if (typeof window !== "undefined") {
@@ -62,16 +67,15 @@ export function ScheduleModal({ isOpen, onClose, onBookingCreated }: ScheduleMod
     }
   }, [isOpen, isScriptReady, onBookingCreated]);
 
-  // ── Force re-render of Cal.com embed when modal opens ─────────────────────
+  // ── Re‑initialize the embed after the modal opens ─────────────────────────
   useEffect(() => {
     if (!isOpen || !isScriptReady) return;
 
-    // Cal.com embed needs a small delay to initialize
     const timer = setTimeout(() => {
       const el = containerRef.current;
       if (el && window.Cal) {
-        // Re-initialize the embed
-        window.Cal("init", {
+        // ✅ Fix: cast to any to bypass TypeScript type error
+        (window.Cal as any)("init", {
           debug: false,
         });
         console.log("🔄 Cal.com embed re-initialized");
@@ -96,7 +100,8 @@ export function ScheduleModal({ isOpen, onClose, onBookingCreated }: ScheduleMod
         <div className="p-6">
           <h2 className="text-xl font-semibold text-white mb-4">Schedule a Call</h2>
           <p className="text-sm text-white/50 mb-6">
-            Select a time that works for you. After booking, you'll be redirected to your meeting room.
+            Select a time that works for you. After booking, you'll be
+            redirected to your meeting room.
           </p>
 
           {!isScriptReady ? (
