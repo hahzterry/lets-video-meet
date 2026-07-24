@@ -9,7 +9,11 @@ interface ScheduleModalProps {
   onBookingCreated?: (booking: any) => void;
 }
 
-export function ScheduleModal({ isOpen, onClose, onBookingCreated }: ScheduleModalProps) {
+export function ScheduleModal({
+  isOpen,
+  onClose,
+  onBookingCreated,
+}: ScheduleModalProps) {
   const [isBookingComplete, setIsBookingComplete] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isScriptReady, setIsScriptReady] = useState(false);
@@ -98,7 +102,9 @@ export function ScheduleModal({ isOpen, onClose, onBookingCreated }: ScheduleMod
         </button>
 
         <div className="p-6">
-          <h2 className="text-xl font-semibold text-white mb-4">Schedule a Call</h2>
+          <h2 className="text-xl font-semibold text-white mb-4">
+            Schedule a Call
+          </h2>
           <p className="text-sm text-white/50 mb-6">
             Select a time that works for you. After booking, you'll be
             redirected to your meeting room.
@@ -123,7 +129,9 @@ export function ScheduleModal({ isOpen, onClose, onBookingCreated }: ScheduleMod
 
           {isBookingComplete && (
             <div className="mt-4 text-center">
-              <p className="text-green-400">✅ Booking confirmed! Redirecting...</p>
+              <p className="text-green-400">
+                ✅ Booking confirmed! Redirecting...
+              </p>
             </div>
           )}
         </div>

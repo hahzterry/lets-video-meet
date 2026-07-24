@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect, useRef } from "react";
-// ❌ Remove this import – it's not used
-// import Script from "next/script";
+// ❌ Script import is not needed – removed
 import {
   Room,
   RoomEvent,
@@ -33,6 +32,7 @@ import {
   Clock,
   Calendar,
 } from "lucide-react";
+
 interface VideoCallProps {
   initialRoom?: string;
   initialName?: string;
@@ -678,7 +678,6 @@ const ScheduleModal = ({
   useEffect(() => {
     if (!isOpen) return;
 
-    // Check if script already exists
     const existingScript = document.querySelector(
       'script[src="https://app.cal.com/embed.js"]'
     );
@@ -687,7 +686,6 @@ const ScheduleModal = ({
       return;
     }
 
-    // Inject script
     const script = document.createElement("script");
     script.src = "https://app.cal.com/embed.js";
     script.async = true;
@@ -697,7 +695,6 @@ const ScheduleModal = ({
     };
     script.onerror = () => {
       console.error("❌ Failed to load Cal.com script");
-      // Fallback: show a message
     };
     document.body.appendChild(script);
   }, [isOpen]);
@@ -726,13 +723,9 @@ const ScheduleModal = ({
   useEffect(() => {
     if (!isOpen || !isScriptReady || !modalRef.current) return;
 
-    // If Cal global is available, re-run the inline embed
     if (window.Cal) {
-      // For inline embeds, we just need the container to be in the DOM
-      // The script automatically picks up any .cal-inline elements
-      // but we need to ensure the container is rendered after script load.
-      // We can force a re‑init if needed.
-      window.Cal("init", { debug: false });
+      // ✅ Cast to any to bypass TypeScript type conflict
+      (window.Cal as any)("init", { debug: false });
     }
   }, [isOpen, isScriptReady]);
 
@@ -810,8 +803,6 @@ export default function VideoCallApp({
   const [showScheduleModal, setShowScheduleModal] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // ── Track helpers ─────────────────────────────────────────────────────────
-
   const getParticipantTracks = (p: Participant) => {
     let videoTrack: VideoTrack | undefined;
     let audioTrack: AudioTrack | undefined;
@@ -858,8 +849,6 @@ export default function VideoCallApp({
     });
     setParticipants(list);
   }, []);
-
-  // ── Chat ──────────────────────────────────────────────────────────────────
 
   const handleDataReceived = useCallback(
     (payload: Uint8Array, participant?: RemoteParticipant) => {
@@ -919,8 +908,6 @@ export default function VideoCallApp({
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatMessages]);
-
-  // ── Join ──────────────────────────────────────────────────────────────────
 
   const joinRoom = useCallback(async () => {
     if (!roomName.trim() || !participantName.trim()) {
@@ -1021,8 +1008,6 @@ export default function VideoCallApp({
     }
   }, [roomName, participantName, updateParticipants, handleDataReceived]);
 
-  // ── Controls ──────────────────────────────────────────────────────────────
-
   const toggleVideo = useCallback(async () => {
     if (!localParticipant) return;
     try {
@@ -1096,8 +1081,6 @@ export default function VideoCallApp({
       room?.disconnect();
     };
   }, [room]);
-
-  // ── Grid layout ───────────────────────────────────────────────────────────
 
   const gridStyle = (): React.CSSProperties => {
     const n = participants.length;
