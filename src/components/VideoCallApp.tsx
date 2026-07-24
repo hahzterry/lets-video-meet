@@ -1406,10 +1406,10 @@ export default function VideoCallApp({
 
           <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
         </div>
-
+         
         {/* ✅ Schedule modal */}
         <ScheduleModal
-          isOpen={showScheduleModal}
+          isOpen={true}
           onClose={() => setShowScheduleModal(false)}
           onBookingCreated={async (booking) => {
             console.log("Booking created, you can redirect now", booking);
