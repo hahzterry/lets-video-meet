@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useCallback, useEffect, useRef } from "react";
-// ❌ Script import is not needed – removed
 import {
   Room,
   RoomEvent,
@@ -659,125 +658,6 @@ const DurationTimer = () => {
   );
 };
 
-// ─── Schedule Modal ──────────────────────────────────────────────────────────
-
-const ScheduleModal = ({
-  isOpen,
-  onClose,
-  onBookingCreated,
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-  onBookingCreated?: (booking: any) => void;
-}) => {
-  const [isBookingComplete, setIsBookingComplete] = useState(false);
-  const [isScriptReady, setIsScriptReady] = useState(false);
-  const modalRef = useRef<HTMLDivElement>(null);
-
-  // ── Load Cal.com embed script dynamically ──────────────────────────────────
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const existingScript = document.querySelector(
-      'script[src="https://app.cal.com/embed.js"]'
-    );
-    if (existingScript) {
-      setIsScriptReady(true);
-      return;
-    }
-
-    const script = document.createElement("script");
-    script.src = "https://app.cal.com/embed.js";
-    script.async = true;
-    script.onload = () => {
-      setIsScriptReady(true);
-      console.log("✅ Cal.com embed script loaded");
-    };
-    script.onerror = () => {
-      console.error("❌ Failed to load Cal.com script");
-    };
-    document.body.appendChild(script);
-  }, [isOpen]);
-
-  // ── Handle booking event ───────────────────────────────────────────────────
-  useEffect(() => {
-    if (!isOpen || !isScriptReady) return;
-
-    const handleBooking = (e: Event) => {
-      const detail = (e as CustomEvent).detail;
-      console.log("Booking created:", detail);
-      setIsBookingComplete(true);
-      if (onBookingCreated) onBookingCreated(detail);
-    };
-
-    const el = modalRef.current;
-    if (el) {
-      el.addEventListener("bookingCreated", handleBooking);
-      return () => {
-        el.removeEventListener("bookingCreated", handleBooking);
-      };
-    }
-  }, [isOpen, isScriptReady, onBookingCreated]);
-
-  // ── Re‑initialize embed when script loads ──────────────────────────────────
-  useEffect(() => {
-    if (!isOpen || !isScriptReady || !modalRef.current) return;
-
-    if (window.Cal) {
-      // ✅ Cast to any to bypass TypeScript type conflict
-      (window.Cal as any)("init", { debug: false });
-    }
-  }, [isOpen, isScriptReady]);
-
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-      <div className="relative w-full max-w-2xl bg-[#0a0a12] rounded-2xl border border-white/10 shadow-2xl overflow-hidden">
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 text-white/50 hover:text-white transition"
-        >
-          <X size={20} />
-        </button>
-
-        <div className="p-6">
-          <h2 className="text-xl font-semibold text-white mb-4">
-            Schedule a Call
-          </h2>
-          <p className="text-sm text-white/50 mb-6">
-            Select a time that works for you. After booking, you'll be
-            redirected to your meeting room.
-          </p>
-
-          {!isScriptReady ? (
-            <div className="flex items-center justify-center h-[500px] text-white/30">
-              <div className="text-center">
-                <div className="w-8 h-8 border-2 border-white/20 border-t-white/80 rounded-full animate-spin mx-auto mb-4" />
-                <p className="text-sm">Loading scheduler…</p>
-              </div>
-            </div>
-          ) : (
-            <div
-              ref={modalRef}
-              className="cal-inline"
-              data-cal-link="hahz-terry-8pcalt"
-              data-cal-config='{"layout":"month_view"}'
-              style={{ minHeight: "500px", width: "100%" }}
-            />
-          )}
-
-          {isBookingComplete && (
-            <div className="mt-4 text-center">
-              <p className="text-green-400">✅ Booking confirmed! Redirecting...</p>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-};
-
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 export default function VideoCallApp({
@@ -800,8 +680,9 @@ export default function VideoCallApp({
   const [messageInput, setMessageInput] = useState("");
   const [isSendingMessage, setIsSendingMessage] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
-  const [showScheduleModal, setShowScheduleModal] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // ── Track helpers ─────────────────────────────────────────────────────────
 
   const getParticipantTracks = (p: Participant) => {
     let videoTrack: VideoTrack | undefined;
@@ -849,6 +730,8 @@ export default function VideoCallApp({
     });
     setParticipants(list);
   }, []);
+
+  // ── Chat ──────────────────────────────────────────────────────────────────
 
   const handleDataReceived = useCallback(
     (payload: Uint8Array, participant?: RemoteParticipant) => {
@@ -908,6 +791,8 @@ export default function VideoCallApp({
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatMessages]);
+
+  // ── Join ──────────────────────────────────────────────────────────────────
 
   const joinRoom = useCallback(async () => {
     if (!roomName.trim() || !participantName.trim()) {
@@ -1008,6 +893,8 @@ export default function VideoCallApp({
     }
   }, [roomName, participantName, updateParticipants, handleDataReceived]);
 
+  // ── Controls ──────────────────────────────────────────────────────────────
+
   const toggleVideo = useCallback(async () => {
     if (!localParticipant) return;
     try {
@@ -1082,6 +969,8 @@ export default function VideoCallApp({
     };
   }, [room]);
 
+  // ── Grid layout ───────────────────────────────────────────────────────────
+
   const gridStyle = (): React.CSSProperties => {
     const n = participants.length;
     if (n <= 1) return { gridTemplateColumns: "1fr", gridTemplateRows: "1fr" };
@@ -1098,260 +987,232 @@ export default function VideoCallApp({
 
   if (!isJoined) {
     return (
-      <>
+      <div
+        style={{
+          minHeight: "100vh",
+          background: "#050508",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: 24,
+          position: "relative",
+          overflow: "hidden",
+          fontFamily: "'DM Sans', 'Segoe UI', sans-serif",
+        }}
+      >
+        {/* Ambient blobs */}
         <div
           style={{
-            minHeight: "100vh",
-            background: "#050508",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: 24,
+            position: "absolute",
+            top: "15%",
+            left: "-10%",
+            width: 500,
+            height: 500,
+            borderRadius: "50%",
+            background:
+              "radial-gradient(circle, rgba(124,58,237,0.25), transparent 70%)",
+            filter: "blur(40px)",
+            animation: "blob1 8s ease-in-out infinite",
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            bottom: "10%",
+            right: "-10%",
+            width: 500,
+            height: 500,
+            borderRadius: "50%",
+            background:
+              "radial-gradient(circle, rgba(219,39,119,0.2), transparent 70%)",
+            filter: "blur(40px)",
+            animation: "blob2 10s ease-in-out infinite",
+          }}
+        />
+
+        <style>{`
+          @keyframes blob1 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(40px,-30px) scale(1.1)} }
+          @keyframes blob2 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(-30px,40px) scale(1.08)} }
+          @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+          input::placeholder { color: rgba(255,255,255,0.25) !important; }
+          input:focus { outline: none !important; border-color: rgba(124,58,237,0.6) !important; box-shadow: 0 0 0 3px rgba(124,58,237,0.15) !important; }
+        `}</style>
+
+        <div
+          style={{
             position: "relative",
-            overflow: "hidden",
-            fontFamily: "'DM Sans', 'Segoe UI', sans-serif",
+            zIndex: 10,
+            width: "100%",
+            maxWidth: 420,
           }}
         >
-          {/* Ambient blobs */}
-          <div
-            style={{
-              position: "absolute",
-              top: "15%",
-              left: "-10%",
-              width: 500,
-              height: 500,
-              borderRadius: "50%",
-              background:
-                "radial-gradient(circle, rgba(124,58,237,0.25), transparent 70%)",
-              filter: "blur(40px)",
-              animation: "blob1 8s ease-in-out infinite",
-            }}
-          />
-          <div
-            style={{
-              position: "absolute",
-              bottom: "10%",
-              right: "-10%",
-              width: 500,
-              height: 500,
-              borderRadius: "50%",
-              background:
-                "radial-gradient(circle, rgba(219,39,119,0.2), transparent 70%)",
-              filter: "blur(40px)",
-              animation: "blob2 10s ease-in-out infinite",
-            }}
-          />
-
-          <style>{`
-            @keyframes blob1 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(40px,-30px) scale(1.1)} }
-            @keyframes blob2 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(-30px,40px) scale(1.08)} }
-            @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-            input::placeholder { color: rgba(255,255,255,0.25) !important; }
-            input:focus { outline: none !important; border-color: rgba(124,58,237,0.6) !important; box-shadow: 0 0 0 3px rgba(124,58,237,0.15) !important; }
-          `}</style>
-
-          <div
-            style={{
-              position: "relative",
-              zIndex: 10,
-              width: "100%",
-              maxWidth: 420,
-            }}
-          >
-            {/* Logo */}
-            <div style={{ textAlign: "center", marginBottom: 48 }}>
-              <div
-                style={{
-                  display: "inline-flex",
-                  width: 72,
-                  height: 72,
-                  borderRadius: 22,
-                  background: "linear-gradient(135deg, #7c3aed, #db2777)",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  marginBottom: 20,
-                  boxShadow: "0 16px 48px rgba(124,58,237,0.45)",
-                }}
-              >
-                <Video size={32} color="#fff" />
-              </div>
-              <h1
-                style={{
-                  color: "#fff",
-                  fontSize: 40,
-                  fontWeight: 800,
-                  margin: "0 0 8px",
-                  letterSpacing: -1,
-                }}
-              >
-                HAHZ Live Video Call
-              </h1>
-              <p
-                style={{
-                  color: "rgba(255,255,255,0.35)",
-                  fontSize: 15,
-                  margin: 0,
-                }}
-              >
-                Crystal-clear video calls, instantly.
-              </p>
-            </div>
-
-            {/* Card */}
+          {/* Logo */}
+          <div style={{ textAlign: "center", marginBottom: 48 }}>
             <div
               style={{
-                background: "rgba(255,255,255,0.04)",
-                backdropFilter: "blur(20px)",
-                border: "1px solid rgba(255,255,255,0.08)",
-                borderRadius: 24,
-                padding: 32,
-                boxShadow: "0 32px 80px rgba(0,0,0,0.5)",
+                display: "inline-flex",
+                width: 72,
+                height: 72,
+                borderRadius: 22,
+                background: "linear-gradient(135deg, #7c3aed, #db2777)",
+                alignItems: "center",
+                justifyContent: "center",
+                marginBottom: 20,
+                boxShadow: "0 16px 48px rgba(124,58,237,0.45)",
               }}
             >
-              <div
-                style={{ display: "flex", flexDirection: "column", gap: 14 }}
-              >
-                <input
-                  type="text"
-                  placeholder="Room name"
-                  value={roomName}
-                  onChange={(e) => setRoomName(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (
-                      e.key === "Enter" &&
-                      roomName.trim() &&
-                      participantName.trim() &&
-                      !isLoading
-                    )
-                      joinRoom();
-                  }}
-                  autoFocus
-                  style={{
-                    height: 52,
-                    background: "rgba(255,255,255,0.05)",
-                    border: "1px solid rgba(255,255,255,0.1)",
-                    borderRadius: 14,
-                    padding: "0 18px",
-                    color: "#fff",
-                    fontSize: 15,
-                    transition: "all 0.2s",
-                    fontFamily: "inherit",
-                  }}
-                />
-                <input
-                  type="text"
-                  placeholder="Your name"
-                  value={participantName}
-                  onChange={(e) => setParticipantName(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (
-                      e.key === "Enter" &&
-                      roomName.trim() &&
-                      participantName.trim() &&
-                      !isLoading
-                    )
-                      joinRoom();
-                  }}
-                  style={{
-                    height: 52,
-                    background: "rgba(255,255,255,0.05)",
-                    border: "1px solid rgba(255,255,255,0.1)",
-                    borderRadius: 14,
-                    padding: "0 18px",
-                    color: "#fff",
-                    fontSize: 15,
-                    transition: "all 0.2s",
-                    fontFamily: "inherit",
-                  }}
-                />
-                <button
-                  onClick={joinRoom}
-                  disabled={
+              <Video size={32} color="#fff" />
+            </div>
+            <h1
+              style={{
+                color: "#fff",
+                fontSize: 40,
+                fontWeight: 800,
+                margin: "0 0 8px",
+                letterSpacing: -1,
+              }}
+            >
+              HAHZ Live Video Call
+            </h1>
+            <p
+              style={{
+                color: "rgba(255,255,255,0.35)",
+                fontSize: 15,
+                margin: 0,
+              }}
+            >
+              Crystal-clear video calls, instantly.
+            </p>
+          </div>
+
+          {/* Card */}
+          <div
+            style={{
+              background: "rgba(255,255,255,0.04)",
+              backdropFilter: "blur(20px)",
+              border: "1px solid rgba(255,255,255,0.08)",
+              borderRadius: 24,
+              padding: 32,
+              boxShadow: "0 32px 80px rgba(0,0,0,0.5)",
+            }}
+          >
+            <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+              <input
+                type="text"
+                placeholder="Room name"
+                value={roomName}
+                onChange={(e) => setRoomName(e.target.value)}
+                onKeyDown={(e) => {
+                  if (
+                    e.key === "Enter" &&
+                    roomName.trim() &&
+                    participantName.trim() &&
+                    !isLoading
+                  )
+                    joinRoom();
+                }}
+                autoFocus
+                style={{
+                  height: 52,
+                  background: "rgba(255,255,255,0.05)",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  borderRadius: 14,
+                  padding: "0 18px",
+                  color: "#fff",
+                  fontSize: 15,
+                  transition: "all 0.2s",
+                  fontFamily: "inherit",
+                }}
+              />
+              <input
+                type="text"
+                placeholder="Your name"
+                value={participantName}
+                onChange={(e) => setParticipantName(e.target.value)}
+                onKeyDown={(e) => {
+                  if (
+                    e.key === "Enter" &&
+                    roomName.trim() &&
+                    participantName.trim() &&
+                    !isLoading
+                  )
+                    joinRoom();
+                }}
+                style={{
+                  height: 52,
+                  background: "rgba(255,255,255,0.05)",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  borderRadius: 14,
+                  padding: "0 18px",
+                  color: "#fff",
+                  fontSize: 15,
+                  transition: "all 0.2s",
+                  fontFamily: "inherit",
+                }}
+              />
+              <button
+                onClick={joinRoom}
+                disabled={
+                  isLoading || !roomName.trim() || !participantName.trim()
+                }
+                style={{
+                  height: 52,
+                  background:
                     isLoading || !roomName.trim() || !participantName.trim()
-                  }
-                  style={{
-                    height: 52,
-                    background:
-                      isLoading || !roomName.trim() || !participantName.trim()
-                        ? "rgba(255,255,255,0.08)"
-                        : "linear-gradient(135deg, #7c3aed, #db2777)",
-                    border: "none",
-                    borderRadius: 14,
-                    color: "#fff",
-                    fontSize: 15,
-                    fontWeight: 700,
-                    cursor:
-                      isLoading || !roomName.trim() || !participantName.trim()
-                        ? "not-allowed"
-                        : "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: 10,
-                    transition: "all 0.2s",
-                    boxShadow:
-                      !isLoading && roomName.trim() && participantName.trim()
-                        ? "0 8px 24px rgba(124,58,237,0.4)"
-                        : "none",
-                    fontFamily: "inherit",
-                  }}
-                >
-                  {isLoading ? (
-                    <>
-                      <div
-                        style={{
-                          width: 18,
-                          height: 18,
-                          border: "2px solid rgba(255,255,255,0.3)",
-                          borderTopColor: "#fff",
-                          borderRadius: "50%",
-                          animation: "spin 0.7s linear infinite",
-                        }}
-                      />
-                      Connecting…
-                    </>
-                  ) : (
-                    <>
-                      <Video size={18} />
-                      Join Room
-                    </>
-                  )}
-                </button>
-
-                {roomName.trim() && (
-                  <button
-                    onClick={copyRoomLink}
-                    style={{
-                      height: 44,
-                      background: "transparent",
-                      border: "1px solid rgba(255,255,255,0.08)",
-                      borderRadius: 14,
-                      color: "rgba(255,255,255,0.45)",
-                      fontSize: 13,
-                      cursor: "pointer",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      gap: 8,
-                      transition: "all 0.2s",
-                      fontFamily: "inherit",
-                      width: "100%",
-                    }}
-                  >
-                    <Copy size={14} />
-                    Copy invite link
-                  </button>
+                      ? "rgba(255,255,255,0.08)"
+                      : "linear-gradient(135deg, #7c3aed, #db2777)",
+                  border: "none",
+                  borderRadius: 14,
+                  color: "#fff",
+                  fontSize: 15,
+                  fontWeight: 700,
+                  cursor:
+                    isLoading || !roomName.trim() || !participantName.trim()
+                      ? "not-allowed"
+                      : "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 10,
+                  transition: "all 0.2s",
+                  boxShadow:
+                    !isLoading && roomName.trim() && participantName.trim()
+                      ? "0 8px 24px rgba(124,58,237,0.4)"
+                      : "none",
+                  fontFamily: "inherit",
+                }}
+              >
+                {isLoading ? (
+                  <>
+                    <div
+                      style={{
+                        width: 18,
+                        height: 18,
+                        border: "2px solid rgba(255,255,255,0.3)",
+                        borderTopColor: "#fff",
+                        borderRadius: "50%",
+                        animation: "spin 0.7s linear infinite",
+                      }}
+                    />
+                    Connecting…
+                  </>
+                ) : (
+                  <>
+                    <Video size={18} />
+                    Join Room
+                  </>
                 )}
+              </button>
 
-                {/* ✅ Schedule button */}
+              {roomName.trim() && (
                 <button
-                  onClick={() => setShowScheduleModal(true)}
+                  onClick={copyRoomLink}
                   style={{
                     height: 44,
-                    background: "rgba(255,255,255,0.05)",
-                    border: "1px solid rgba(255,255,255,0.1)",
+                    background: "transparent",
+                    border: "1px solid rgba(255,255,255,0.08)",
                     borderRadius: 14,
-                    color: "rgba(255,255,255,0.7)",
+                    color: "rgba(255,255,255,0.45)",
                     fontSize: 13,
                     cursor: "pointer",
                     display: "flex",
@@ -1363,61 +1224,77 @@ export default function VideoCallApp({
                     width: "100%",
                   }}
                 >
-                  <Calendar size={14} />
-                  Schedule a Call
+                  <Copy size={14} />
+                  Copy invite link
                 </button>
-              </div>
-            </div>
+              )}
 
-            {/* Features strip */}
-            <div
-              style={{
-                marginTop: 28,
-                display: "flex",
-                justifyContent: "center",
-                gap: 28,
-                color: "rgba(255,255,255,0.3)",
-                fontSize: 12,
-              }}
-            >
-              {[
-                { dot: "#22c55e", label: "HD Video" },
-                { dot: "#3b82f6", label: "Screen Share" },
-                { dot: "#a78bfa", label: "Live Chat" },
-              ].map(({ dot, label }) => (
-                <div
-                  key={label}
-                  style={{ display: "flex", alignItems: "center", gap: 6 }}
-                >
-                  <div
-                    style={{
-                      width: 6,
-                      height: 6,
-                      borderRadius: "50%",
-                      background: dot,
-                      animation: "pulse 2s ease-in-out infinite",
-                    }}
-                  />
-                  {label}
-                </div>
-              ))}
+              {/* ✅ Schedule button – now a direct link */}
+              <a
+                href="https://cal.com/hahz-terry-8pcalt"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  height: 44,
+                  background: "rgba(255,255,255,0.05)",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  borderRadius: 14,
+                  color: "rgba(255,255,255,0.7)",
+                  fontSize: 13,
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 8,
+                  transition: "all 0.2s",
+                  fontFamily: "inherit",
+                  width: "100%",
+                  textDecoration: "none",
+                }}
+              >
+                <Calendar size={14} />
+                Schedule a Call
+              </a>
             </div>
           </div>
 
-          <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+          {/* Features strip */}
+          <div
+            style={{
+              marginTop: 28,
+              display: "flex",
+              justifyContent: "center",
+              gap: 28,
+              color: "rgba(255,255,255,0.3)",
+              fontSize: 12,
+            }}
+          >
+            {[
+              { dot: "#22c55e", label: "HD Video" },
+              { dot: "#3b82f6", label: "Screen Share" },
+              { dot: "#a78bfa", label: "Live Chat" },
+            ].map(({ dot, label }) => (
+              <div
+                key={label}
+                style={{ display: "flex", alignItems: "center", gap: 6 }}
+              >
+                <div
+                  style={{
+                    width: 6,
+                    height: 6,
+                    borderRadius: "50%",
+                    background: dot,
+                    animation: "pulse 2s ease-in-out infinite",
+                  }}
+                />
+                {label}
+              </div>
+            ))}
+          </div>
         </div>
-         
-        {/* ✅ Schedule modal */}
-        <ScheduleModal
-          isOpen={showScheduleModal}
-          onClose={() => setShowScheduleModal(false)}
-          onBookingCreated={async (booking) => {
-            console.log("Booking created, you can redirect now", booking);
-            setShowScheduleModal(false);
-            toast.success("Booking confirmed! Check your email for details.");
-          }}
-        />
-      </>
+
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      </div>
     );
   }
 
