@@ -1409,7 +1409,7 @@ export default function VideoCallApp({
          
         {/* ✅ Schedule modal */}
         <ScheduleModal
-          isOpen={true}
+          isOpen={showScheduleModal}
           onClose={() => setShowScheduleModal(false)}
           onBookingCreated={async (booking) => {
             console.log("Booking created, you can redirect now", booking);
