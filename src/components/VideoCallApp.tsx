@@ -1253,7 +1253,7 @@ export default function VideoCallApp({
                 }}
               >
                 <Calendar size={14} />
-                Schedule a Call
+                Book a Call
               </a>
             </div>
           </div>
