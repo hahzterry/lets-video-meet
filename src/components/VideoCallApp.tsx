@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useCallback, useEffect, useRef } from "react";
+// ❌ Remove this import – it's not used
+// import Script from "next/script";
 import {
   Room,
   RoomEvent,
@@ -9,9 +11,7 @@ import {
   Participant,
   VideoTrack,
   AudioTrack,
-  ConnectionState,
   VideoPresets,
-  AudioPresets,
   Track,
   createLocalVideoTrack,
   createLocalAudioTrack,
@@ -30,14 +30,9 @@ import {
   MessageCircle,
   X,
   Send,
-  Wifi,
   Clock,
-  Calendar, // ✅ added
+  Calendar,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-
 interface VideoCallProps {
   initialRoom?: string;
   initialName?: string;
@@ -676,10 +671,40 @@ const ScheduleModal = ({
   onBookingCreated?: (booking: any) => void;
 }) => {
   const [isBookingComplete, setIsBookingComplete] = useState(false);
+  const [isScriptReady, setIsScriptReady] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
 
+  // ── Load Cal.com embed script dynamically ──────────────────────────────────
   useEffect(() => {
     if (!isOpen) return;
+
+    // Check if script already exists
+    const existingScript = document.querySelector(
+      'script[src="https://app.cal.com/embed.js"]'
+    );
+    if (existingScript) {
+      setIsScriptReady(true);
+      return;
+    }
+
+    // Inject script
+    const script = document.createElement("script");
+    script.src = "https://app.cal.com/embed.js";
+    script.async = true;
+    script.onload = () => {
+      setIsScriptReady(true);
+      console.log("✅ Cal.com embed script loaded");
+    };
+    script.onerror = () => {
+      console.error("❌ Failed to load Cal.com script");
+      // Fallback: show a message
+    };
+    document.body.appendChild(script);
+  }, [isOpen]);
+
+  // ── Handle booking event ───────────────────────────────────────────────────
+  useEffect(() => {
+    if (!isOpen || !isScriptReady) return;
 
     const handleBooking = (e: Event) => {
       const detail = (e as CustomEvent).detail;
@@ -695,7 +720,21 @@ const ScheduleModal = ({
         el.removeEventListener("bookingCreated", handleBooking);
       };
     }
-  }, [isOpen, onBookingCreated]);
+  }, [isOpen, isScriptReady, onBookingCreated]);
+
+  // ── Re‑initialize embed when script loads ──────────────────────────────────
+  useEffect(() => {
+    if (!isOpen || !isScriptReady || !modalRef.current) return;
+
+    // If Cal global is available, re-run the inline embed
+    if (window.Cal) {
+      // For inline embeds, we just need the container to be in the DOM
+      // The script automatically picks up any .cal-inline elements
+      // but we need to ensure the container is rendered after script load.
+      // We can force a re‑init if needed.
+      window.Cal("init", { debug: false });
+    }
+  }, [isOpen, isScriptReady]);
 
   if (!isOpen) return null;
 
@@ -718,13 +757,22 @@ const ScheduleModal = ({
             redirected to your meeting room.
           </p>
 
-          <div
-            ref={modalRef}
-            className="cal-inline"
-            data-cal-link="hahz-terry-8pcalt"
-            data-cal-config='{"layout":"month_view"}'
-            style={{ minHeight: "500px", width: "100%" }}
-          />
+          {!isScriptReady ? (
+            <div className="flex items-center justify-center h-[500px] text-white/30">
+              <div className="text-center">
+                <div className="w-8 h-8 border-2 border-white/20 border-t-white/80 rounded-full animate-spin mx-auto mb-4" />
+                <p className="text-sm">Loading scheduler…</p>
+              </div>
+            </div>
+          ) : (
+            <div
+              ref={modalRef}
+              className="cal-inline"
+              data-cal-link="hahz-terry-8pcalt"
+              data-cal-config='{"layout":"month_view"}'
+              style={{ minHeight: "500px", width: "100%" }}
+            />
+          )}
 
           {isBookingComplete && (
             <div className="mt-4 text-center">
@@ -759,7 +807,7 @@ export default function VideoCallApp({
   const [messageInput, setMessageInput] = useState("");
   const [isSendingMessage, setIsSendingMessage] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
-  const [showScheduleModal, setShowScheduleModal] = useState(false); // ✅ new
+  const [showScheduleModal, setShowScheduleModal] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // ── Track helpers ─────────────────────────────────────────────────────────
@@ -1381,13 +1429,7 @@ export default function VideoCallApp({
           isOpen={showScheduleModal}
           onClose={() => setShowScheduleModal(false)}
           onBookingCreated={async (booking) => {
-            // Optionally create a room and redirect after booking
             console.log("Booking created, you can redirect now", booking);
-            // Example: fetch to create room, then redirect
-            // const res = await fetch("/api/create-room-from-booking", { ... });
-            // const { roomName } = await res.json();
-            // window.location.href = `?room=${encodeURIComponent(roomName)}`;
-            // For now, just close the modal
             setShowScheduleModal(false);
             toast.success("Booking confirmed! Check your email for details.");
           }}

@@ -12,9 +12,37 @@ interface ScheduleModalProps {
 export function ScheduleModal({ isOpen, onClose, onBookingCreated }: ScheduleModalProps) {
   const [isBookingComplete, setIsBookingComplete] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [isScriptReady, setIsScriptReady] = useState(false);
 
+  // ── Check if Cal.com script is loaded ──────────────────────────────────────
   useEffect(() => {
-    if (!isOpen) return;
+    const checkScript = () => {
+      const calScript = document.querySelector('script[src="https://app.cal.com/embed.js"]');
+      if (calScript) {
+        setIsScriptReady(true);
+        console.log("✅ Cal.com script is loaded");
+      } else {
+        console.warn("⚠️ Cal.com script not found. Make sure it's in your layout.");
+        // Try to load it dynamically as fallback
+        const script = document.createElement("script");
+        script.src = "https://app.cal.com/embed.js";
+        script.async = true;
+        script.onload = () => {
+          setIsScriptReady(true);
+          console.log("✅ Cal.com script loaded dynamically");
+        };
+        document.body.appendChild(script);
+      }
+    };
+
+    if (typeof window !== "undefined") {
+      checkScript();
+    }
+  }, []);
+
+  // ── Handle booking event ───────────────────────────────────────────────────
+  useEffect(() => {
+    if (!isOpen || !isScriptReady) return;
 
     const handleBooking = (e: Event) => {
       const detail = (e as CustomEvent).detail;
@@ -32,7 +60,26 @@ export function ScheduleModal({ isOpen, onClose, onBookingCreated }: ScheduleMod
         el.removeEventListener("bookingCreated", handleBooking);
       };
     }
-  }, [isOpen, onBookingCreated]);
+  }, [isOpen, isScriptReady, onBookingCreated]);
+
+  // ── Force re-render of Cal.com embed when modal opens ─────────────────────
+  useEffect(() => {
+    if (!isOpen || !isScriptReady) return;
+
+    // Cal.com embed needs a small delay to initialize
+    const timer = setTimeout(() => {
+      const el = containerRef.current;
+      if (el && window.Cal) {
+        // Re-initialize the embed
+        window.Cal("init", {
+          debug: false,
+        });
+        console.log("🔄 Cal.com embed re-initialized");
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [isOpen, isScriptReady]);
 
   if (!isOpen) return null;
 
@@ -52,13 +99,22 @@ export function ScheduleModal({ isOpen, onClose, onBookingCreated }: ScheduleMod
             Select a time that works for you. After booking, you'll be redirected to your meeting room.
           </p>
 
-          <div
-            ref={containerRef}
-            className="cal-inline"
-            data-cal-link="hahz-terry-8pcalt"
-            data-cal-config='{"layout":"month_view"}'
-            style={{ minHeight: "500px", width: "100%" }}
-          />
+          {!isScriptReady ? (
+            <div className="flex items-center justify-center h-[500px] text-white/30">
+              <div className="text-center">
+                <div className="w-8 h-8 border-2 border-white/20 border-t-white/80 rounded-full animate-spin mx-auto mb-4" />
+                <p className="text-sm">Loading scheduler…</p>
+              </div>
+            </div>
+          ) : (
+            <div
+              ref={containerRef}
+              className="cal-inline"
+              data-cal-link="hahz-terry-8pcalt"
+              data-cal-config='{"layout":"month_view"}'
+              style={{ minHeight: "500px", width: "100%" }}
+            />
+          )}
 
           {isBookingComplete && (
             <div className="mt-4 text-center">
