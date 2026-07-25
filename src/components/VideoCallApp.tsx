@@ -1072,7 +1072,7 @@ export default function VideoCallApp({
                 letterSpacing: -1,
               }}
             >
-              HAHZ Live Video Call
+              ASK Hahz Live
             </h1>
             <p
               style={{
@@ -1081,7 +1081,7 @@ export default function VideoCallApp({
                 margin: 0,
               }}
             >
-              Crystal-clear video calls, instantly.
+              1-on-1 or group mastermind consultations
             </p>
           </div>
 
