@@ -1231,7 +1231,7 @@ export default function VideoCallApp({
 
               {/* ✅ Schedule button – now a direct link */}
               <a
-                href="https://cal.com/hahz-terry-8pcalt"
+                href="https://cal.com/3wordpin"
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
