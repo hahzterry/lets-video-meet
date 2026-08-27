@@ -32,6 +32,49 @@ import {
   Calendar,
 } from "lucide-react";
 
+// ─── Livestream Icon ───────────────────────────────────────────────────────────
+const LivestreamIcon = ({ size = 32, color = "#fff" }: { size?: number; color?: string }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <rect
+      x="2"
+      y="4"
+      width="16"
+      height="12"
+      rx="2"
+      stroke={color}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <line x1="6" y1="18" x2="14" y2="18" stroke={color} strokeWidth="2" strokeLinecap="round" />
+    <line x1="8" y1="20" x2="12" y2="20" stroke={color} strokeWidth="2" strokeLinecap="round" />
+    <polygon points="8.5,7.5 8.5,12.5 12.5,10" fill={color} fillOpacity="0.9" />
+    <circle cx="14" cy="6" r="2" fill="#ef4444" />
+    <path
+      d="M18 3C19.5 4.5 20.5 6.5 20.5 9"
+      stroke={color}
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeOpacity="0.4"
+    />
+    <path
+      d="M19.5 5.5C20.5 6.5 21 8 21 9.5"
+      stroke={color}
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeOpacity="0.2"
+    />
+  </svg>
+);
+
+// ─── Interfaces ──────────────────────────────────────────────────────────────
+
 interface VideoCallProps {
   initialRoom?: string;
   initialName?: string;
@@ -99,8 +142,7 @@ const ChatPanel = ({
         backdropFilter: "blur(24px)",
         border: "1px solid rgba(255,255,255,0.08)",
         borderRadius: 20,
-        boxShadow:
-          "0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04)",
+        boxShadow: "0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04)",
         overflow: "hidden",
       }}
     >
@@ -117,14 +159,7 @@ const ChatPanel = ({
       >
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <MessageCircle size={16} style={{ color: "#a78bfa" }} />
-          <span
-            style={{
-              color: "#fff",
-              fontWeight: 600,
-              fontSize: 14,
-              letterSpacing: 0.2,
-            }}
-          >
+          <span style={{ color: "#fff", fontWeight: 600, fontSize: 14, letterSpacing: 0.2 }}>
             Messages
           </span>
           {chatMessages.length > 0 && (
@@ -183,10 +218,7 @@ const ChatPanel = ({
               color: "rgba(255,255,255,0.2)",
             }}
           >
-            <MessageCircle
-              size={36}
-              style={{ marginBottom: 12, opacity: 0.4 }}
-            />
+            <MessageCircle size={36} style={{ marginBottom: 12, opacity: 0.4 }} />
             <p style={{ fontSize: 13, margin: 0 }}>No messages yet</p>
           </div>
         ) : (
@@ -202,14 +234,7 @@ const ChatPanel = ({
                 }}
               >
                 {!isOwn && (
-                  <span
-                    style={{
-                      fontSize: 11,
-                      color: "#a78bfa",
-                      marginBottom: 4,
-                      fontWeight: 600,
-                    }}
-                  >
+                  <span style={{ fontSize: 11, color: "#a78bfa", marginBottom: 4, fontWeight: 600 }}>
                     {msg.from.name}
                   </span>
                 )}
@@ -217,9 +242,7 @@ const ChatPanel = ({
                   style={{
                     maxWidth: "80%",
                     padding: "8px 13px",
-                    borderRadius: isOwn
-                      ? "14px 14px 4px 14px"
-                      : "14px 14px 14px 4px",
+                    borderRadius: isOwn ? "14px 14px 4px 14px" : "14px 14px 14px 4px",
                     background: isOwn
                       ? "linear-gradient(135deg, #7c3aed, #db2777)"
                       : "rgba(255,255,255,0.07)",
@@ -239,10 +262,7 @@ const ChatPanel = ({
                     marginTop: 4,
                   }}
                 >
-                  {new Date(msg.timestamp).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
+                  {new Date(msg.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                 </span>
               </div>
             );
@@ -441,25 +461,12 @@ const VideoTile = ({
           >
             {initial}
           </div>
-          <p
-            style={{
-              color: "rgba(255,255,255,0.4)",
-              fontSize: 12,
-              marginTop: 12,
-            }}
-          >
-            Camera off
-          </p>
+          <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 12, marginTop: 12 }}>Camera off</p>
         </div>
       )}
 
       {!participant.isLocal && (
-        <audio
-          ref={audioRef}
-          autoPlay
-          playsInline
-          style={{ display: "none" }}
-        />
+        <audio ref={audioRef} autoPlay playsInline style={{ display: "none" }} />
       )}
 
       <div
@@ -660,18 +667,14 @@ const DurationTimer = () => {
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
-export default function VideoCallApp({
-  initialRoom = "",
-  initialName = "",
-}: VideoCallProps) {
+export default function VideoCallApp({ initialRoom = "", initialName = "" }: VideoCallProps) {
   const [roomName, setRoomName] = useState(initialRoom);
   const [participantName, setParticipantName] = useState(initialName);
   const [isJoined, setIsJoined] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [room, setRoom] = useState<Room | null>(null);
   const [participants, setParticipants] = useState<ParticipantInfo[]>([]);
-  const [localParticipant, setLocalParticipant] =
-    useState<LocalParticipant | null>(null);
+  const [localParticipant, setLocalParticipant] = useState<LocalParticipant | null>(null);
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const [isScreenSharing, setIsScreenSharing] = useState(false);
@@ -692,8 +695,7 @@ export default function VideoCallApp({
     p.trackPublications.forEach((pub) => {
       if (!pub.track) return;
       if (pub.kind === Track.Kind.Video) {
-        if (pub.source === Track.Source.ScreenShare)
-          screenShareTrack = pub.track as VideoTrack;
+        if (pub.source === Track.Source.ScreenShare) screenShareTrack = pub.track as VideoTrack;
         else videoTrack = pub.track as VideoTrack;
       } else if (pub.kind === Track.Kind.Audio) {
         audioTrack = pub.track as AudioTrack;
@@ -861,9 +863,7 @@ export default function VideoCallApp({
         updateParticipants(newRoom);
       });
       newRoom.on(RoomEvent.TrackSubscribed, () => updateParticipants(newRoom));
-      newRoom.on(RoomEvent.TrackUnsubscribed, () =>
-        updateParticipants(newRoom),
-      );
+      newRoom.on(RoomEvent.TrackUnsubscribed, () => updateParticipants(newRoom));
       newRoom.on(RoomEvent.LocalTrackPublished, (pub) => {
         if (pub.source === Track.Source.ScreenShare) setIsScreenSharing(true);
         updateParticipants(newRoom);
@@ -874,9 +874,7 @@ export default function VideoCallApp({
       });
       newRoom.on(RoomEvent.TrackMuted, () => updateParticipants(newRoom));
       newRoom.on(RoomEvent.TrackUnmuted, () => updateParticipants(newRoom));
-      newRoom.on(RoomEvent.ActiveSpeakersChanged, () =>
-        updateParticipants(newRoom),
-      );
+      newRoom.on(RoomEvent.ActiveSpeakersChanged, () => updateParticipants(newRoom));
       newRoom.on(RoomEvent.DataReceived, handleDataReceived);
 
       const url = process.env.NEXT_PUBLIC_LIVEKIT_URL;
@@ -974,10 +972,8 @@ export default function VideoCallApp({
   const gridStyle = (): React.CSSProperties => {
     const n = participants.length;
     if (n <= 1) return { gridTemplateColumns: "1fr", gridTemplateRows: "1fr" };
-    if (n === 2)
-      return { gridTemplateColumns: "1fr 1fr", gridTemplateRows: "1fr" };
-    if (n <= 4)
-      return { gridTemplateColumns: "1fr 1fr", gridTemplateRows: "1fr 1fr" };
+    if (n === 2) return { gridTemplateColumns: "1fr 1fr", gridTemplateRows: "1fr" };
+    if (n <= 4) return { gridTemplateColumns: "1fr 1fr", gridTemplateRows: "1fr 1fr" };
     return { gridTemplateColumns: "1fr 1fr 1fr", gridTemplateRows: "1fr 1fr" };
   };
 
@@ -989,12 +985,12 @@ export default function VideoCallApp({
     return (
       <div
         style={{
-          minHeight: "100vh",
+          minHeight: "100dvh",
           background: "#050508",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          padding: 24,
+          padding: 16,
           position: "relative",
           overflow: "hidden",
           fontFamily: "'DM Sans', 'Segoe UI', sans-serif",
@@ -1009,8 +1005,7 @@ export default function VideoCallApp({
             width: 500,
             height: 500,
             borderRadius: "50%",
-            background:
-              "radial-gradient(circle, rgba(124,58,237,0.25), transparent 70%)",
+            background: "radial-gradient(circle, rgba(124,58,237,0.25), transparent 70%)",
             filter: "blur(40px)",
             animation: "blob1 8s ease-in-out infinite",
           }}
@@ -1023,8 +1018,7 @@ export default function VideoCallApp({
             width: 500,
             height: 500,
             borderRadius: "50%",
-            background:
-              "radial-gradient(circle, rgba(219,39,119,0.2), transparent 70%)",
+            background: "radial-gradient(circle, rgba(219,39,119,0.2), transparent 70%)",
             filter: "blur(40px)",
             animation: "blob2 10s ease-in-out infinite",
           }}
@@ -1047,94 +1041,30 @@ export default function VideoCallApp({
           }}
         >
           {/* Logo */}
-           <div style={{ textAlign: "center", marginBottom: 48 }}>
+          <div style={{ textAlign: "center", marginBottom: 48 }}>
             <div
               style={{
-              display: "inline-flex",
-              width: 72,
-              height: 72,
-              borderRadius: 22,
-              background: "linear-gradient(135deg, #7c3aed, #db2777)",
-              alignItems: "center",
-              justifyContent: "center",
-              marginBottom: 20,
-              boxShadow: "0 16px 48px rgba(124,58,237,0.45)",
-             }}
-  >
-           // ─── Livestream Icon ───────────────────────────────────────────────────────────
-
-const LivestreamIcon = ({ size = 32, color = "#fff" }: { size?: number; color?: string }) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    {/* Monitor screen */}
-    <rect
-      x="2"
-      y="4"
-      width="16"
-      height="12"
-      rx="2"
-      stroke={color}
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    {/* Stand */}
-    <line
-      x1="6"
-      y1="18"
-      x2="14"
-      y2="18"
-      stroke={color}
-      strokeWidth="2"
-      strokeLinecap="round"
-    />
-    <line
-      x1="8"
-      y1="20"
-      x2="12"
-      y2="20"
-      stroke={color}
-      strokeWidth="2"
-      strokeLinecap="round"
-    />
-    {/* Play button (livestream indicator) */}
-    <polygon
-      points="8.5,7.5 8.5,12.5 12.5,10"
-      fill={color}
-      fillOpacity="0.9"
-    />
-    {/* Live recording dot */}
-    <circle cx="14" cy="6" r="2" fill="#ef4444" />
-    {/* Broadcast signal waves */}
-    <path
-      d="M18 3C19.5 4.5 20.5 6.5 20.5 9"
-      stroke={color}
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeOpacity="0.4"
-    />
-    <path
-      d="M19.5 5.5C20.5 6.5 21 8 21 9.5"
-      stroke={color}
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeOpacity="0.2"
-    />
-  </svg>
-);
+                display: "inline-flex",
+                width: 72,
+                height: 72,
+                borderRadius: 22,
+                background: "linear-gradient(135deg, #7c3aed, #db2777)",
+                alignItems: "center",
+                justifyContent: "center",
+                marginBottom: 20,
+                boxShadow: "0 16px 48px rgba(124,58,237,0.45)",
+              }}
+            >
+              <LivestreamIcon size={32} color="#fff" />
+            </div>
             <h1
               style={{
-              color: "#fff",
-              fontSize: 40,
-              fontWeight: 800,
-              margin: "0 0 8px",
-              letterSpacing: -1,
-           }}
+                color: "#fff",
+                fontSize: 40,
+                fontWeight: 800,
+                margin: "0 0 8px",
+                letterSpacing: -1,
+              }}
             >
               3 Word Pin Livestream Reality Show
             </h1>
@@ -1145,7 +1075,16 @@ const LivestreamIcon = ({ size = 32, color = "#fff" }: { size?: number; color?: 
                 margin: 0,
               }}
             >
-              Livestream shows mapped to <a href="https://3wordpin.com" target="_blank" rel="noopener noreferrer" style={{ color: "rgba(255,255,255,0.35)", textDecoration: "underline" }}>3 Word Pin</a> locations. Join a room to watch and chat with others.
+              Livestream shows mapped to{" "}
+              <a
+                href="https://3wordpin.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: "rgba(255,255,255,0.35)", textDecoration: "underline" }}
+              >
+                3 Word Pin
+              </a>{" "}
+              locations. Join a room to watch and chat with others.
             </p>
           </div>
 
@@ -1216,9 +1155,7 @@ const LivestreamIcon = ({ size = 32, color = "#fff" }: { size?: number; color?: 
               />
               <button
                 onClick={joinRoom}
-                disabled={
-                  isLoading || !roomName.trim() || !participantName.trim()
-                }
+                disabled={isLoading || !roomName.trim() || !participantName.trim()}
                 style={{
                   height: 52,
                   background:
@@ -1293,7 +1230,6 @@ const LivestreamIcon = ({ size = 32, color = "#fff" }: { size?: number; color?: 
                 </button>
               )}
 
-              {/* ✅ Schedule button – now a direct link */}
               <a
                 href="https://cal.com/3wordpin"
                 target="_blank"
@@ -1322,61 +1258,61 @@ const LivestreamIcon = ({ size = 32, color = "#fff" }: { size?: number; color?: 
             </div>
           </div>
 
-          {/* ✅ Join Social button */}
-<a
-  href="https://social.3wordpin.com"
-  target="_blank"
-  rel="noopener noreferrer"
-  style={{
-    height: 44,
-    background: "rgba(255,255,255,0.05)",
-    border: "1px solid rgba(255,255,255,0.1)",
-    borderRadius: 14,
-    color: "rgba(255,255,255,0.7)",
-    fontSize: 13,
-    cursor: "pointer",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 8,
-    transition: "all 0.2s",
-    fontFamily: "inherit",
-    width: "100%",
-    textDecoration: "none",
-    marginTop: 10,
-  }}
->
-  <span style={{ fontSize: 16 }}>💬</span>
-  Join Social
-</a>
+          {/* Join Social */}
+          <a
+            href="https://social.3wordpin.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              height: 44,
+              background: "rgba(255,255,255,0.05)",
+              border: "1px solid rgba(255,255,255,0.1)",
+              borderRadius: 14,
+              color: "rgba(255,255,255,0.7)",
+              fontSize: 13,
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 8,
+              transition: "all 0.2s",
+              fontFamily: "inherit",
+              width: "100%",
+              textDecoration: "none",
+              marginTop: 10,
+            }}
+          >
+            <span style={{ fontSize: 16 }}>💬</span>
+            Join Social
+          </a>
 
-{/* ✅ Find 3 Word Pin button */}
-<a
-  href="https://3wordpin.com"
-  target="_blank"
-  rel="noopener noreferrer"
-  style={{
-    height: 44,
-    background: "rgba(255,255,255,0.05)",
-    border: "1px solid rgba(255,255,255,0.1)",
-    borderRadius: 14,
-    color: "rgba(255,255,255,0.7)",
-    fontSize: 13,
-    cursor: "pointer",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 8,
-    transition: "all 0.2s",
-    fontFamily: "inherit",
-    width: "100%",
-    textDecoration: "none",
-    marginTop: 10,
-  }}
->
-  <span style={{ fontSize: 16 }}>📍</span>
-  Find 3 Word Pin
-</a>
+          {/* Find 3 Word Pin */}
+          <a
+            href="https://3wordpin.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              height: 44,
+              background: "rgba(255,255,255,0.05)",
+              border: "1px solid rgba(255,255,255,0.1)",
+              borderRadius: 14,
+              color: "rgba(255,255,255,0.7)",
+              fontSize: 13,
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 8,
+              transition: "all 0.2s",
+              fontFamily: "inherit",
+              width: "100%",
+              textDecoration: "none",
+              marginTop: 10,
+            }}
+          >
+            <span style={{ fontSize: 16 }}>📍</span>
+            Find 3 Word Pin
+          </a>
 
           {/* Features strip */}
           <div
@@ -1394,10 +1330,7 @@ const LivestreamIcon = ({ size = 32, color = "#fff" }: { size?: number; color?: 
               { dot: "#3b82f6", label: "Screen Share" },
               { dot: "#a78bfa", label: "Live Chat" },
             ].map(({ dot, label }) => (
-              <div
-                key={label}
-                style={{ display: "flex", alignItems: "center", gap: 6 }}
-              >
+              <div key={label} style={{ display: "flex", alignItems: "center", gap: 6 }}>
                 <div
                   style={{
                     width: 6,
@@ -1439,7 +1372,6 @@ const LivestreamIcon = ({ size = 32, color = "#fff" }: { size?: number; color?: 
         * { box-sizing: border-box; }
       `}</style>
 
-      {/* Subtle ambient */}
       <div
         style={{
           position: "absolute",
@@ -1450,7 +1382,7 @@ const LivestreamIcon = ({ size = 32, color = "#fff" }: { size?: number; color?: 
         }}
       />
 
-      {/* ── Top bar ── */}
+      {/* Top bar */}
       <div
         style={{
           position: "relative",
@@ -1479,9 +1411,7 @@ const LivestreamIcon = ({ size = 32, color = "#fff" }: { size?: number; color?: 
             <Video size={18} color="#fff" />
           </div>
           <div>
-            <div style={{ color: "#fff", fontWeight: 700, fontSize: 15 }}>
-              {roomName}
-            </div>
+            <div style={{ color: "#fff", fontWeight: 700, fontSize: 15 }}>{roomName}</div>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <Clock size={11} style={{ color: "rgba(255,255,255,0.3)" }} />
               <DurationTimer />
@@ -1573,7 +1503,7 @@ const LivestreamIcon = ({ size = 32, color = "#fff" }: { size?: number; color?: 
         </div>
       </div>
 
-      {/* ── Video grid ── */}
+      {/* Video grid */}
       <div
         style={{
           flex: 1,
@@ -1592,16 +1522,12 @@ const LivestreamIcon = ({ size = 32, color = "#fff" }: { size?: number; color?: 
           }}
         >
           {participants.map((p) => (
-            <VideoTile
-              key={p.identity}
-              participant={p}
-              isLarge={participants.length <= 2}
-            />
+            <VideoTile key={p.identity} participant={p} isLarge={participants.length <= 2} />
           ))}
         </div>
       </div>
 
-      {/* ── Control bar ── */}
+      {/* Control bar */}
       <div
         style={{
           position: "relative",
@@ -1640,7 +1566,6 @@ const LivestreamIcon = ({ size = 32, color = "#fff" }: { size?: number; color?: 
           {isScreenSharing ? <MonitorOff size={20} /> : <Monitor size={20} />}
         </CtrlBtn>
 
-        {/* Chat button with unread badge */}
         <div style={{ position: "relative" }}>
           <CtrlBtn active={showChat} onClick={handleToggleChat} label="Chat">
             <MessageCircle size={20} />
@@ -1683,7 +1608,7 @@ const LivestreamIcon = ({ size = 32, color = "#fff" }: { size?: number; color?: 
         </CtrlBtn>
       </div>
 
-      {/* ── Chat panel ── */}
+      {/* Chat panel */}
       <ChatPanel
         showChat={showChat}
         chatMessages={chatMessages}
