@@ -1061,8 +1061,72 @@ export default function VideoCallApp({
               boxShadow: "0 16px 48px rgba(124,58,237,0.45)",
              }}
   >
-           <LivestreamIcon size={32} color="#fff" />
-             </div>
+           // ─── Livestream Icon ───────────────────────────────────────────────────────────
+
+const LivestreamIcon = ({ size = 32, color = "#fff" }: { size?: number; color?: string }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    {/* Monitor screen */}
+    <rect
+      x="2"
+      y="4"
+      width="16"
+      height="12"
+      rx="2"
+      stroke={color}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    {/* Stand */}
+    <line
+      x1="6"
+      y1="18"
+      x2="14"
+      y2="18"
+      stroke={color}
+      strokeWidth="2"
+      strokeLinecap="round"
+    />
+    <line
+      x1="8"
+      y1="20"
+      x2="12"
+      y2="20"
+      stroke={color}
+      strokeWidth="2"
+      strokeLinecap="round"
+    />
+    {/* Play button (livestream indicator) */}
+    <polygon
+      points="8.5,7.5 8.5,12.5 12.5,10"
+      fill={color}
+      fillOpacity="0.9"
+    />
+    {/* Live recording dot */}
+    <circle cx="14" cy="6" r="2" fill="#ef4444" />
+    {/* Broadcast signal waves */}
+    <path
+      d="M18 3C19.5 4.5 20.5 6.5 20.5 9"
+      stroke={color}
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeOpacity="0.4"
+    />
+    <path
+      d="M19.5 5.5C20.5 6.5 21 8 21 9.5"
+      stroke={color}
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeOpacity="0.2"
+    />
+  </svg>
+);
             <h1
               style={{
               color: "#fff",
