@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Hahz Terry Live",
-  description: "Watch the Wizard of Hahz Live",
+  title: "Live 3 Word Pin",
+  description: "Book A Livestream Mapped To A 3 Word Pin",
 };
 
 export default function RootLayout({
