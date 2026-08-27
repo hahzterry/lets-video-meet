@@ -1047,32 +1047,32 @@ export default function VideoCallApp({
           }}
         >
           {/* Logo */}
-          <div style={{ textAlign: "center", marginBottom: 48 }}>
+           <div style={{ textAlign: "center", marginBottom: 48 }}>
             <div
               style={{
-                display: "inline-flex",
-                width: 72,
-                height: 72,
-                borderRadius: 22,
-                background: "linear-gradient(135deg, #7c3aed, #db2777)",
-                alignItems: "center",
-                justifyContent: "center",
-                marginBottom: 20,
-                boxShadow: "0 16px 48px rgba(124,58,237,0.45)",
-              }}
-            >
-              <Video size={32} color="#fff" />
-            </div>
+              display: "inline-flex",
+              width: 72,
+              height: 72,
+              borderRadius: 22,
+              background: "linear-gradient(135deg, #7c3aed, #db2777)",
+              alignItems: "center",
+              justifyContent: "center",
+              marginBottom: 20,
+              boxShadow: "0 16px 48px rgba(124,58,237,0.45)",
+             }}
+  >
+           <LivestreamIcon size={32} color="#fff" />
+             </div>
             <h1
               style={{
-                color: "#fff",
-                fontSize: 40,
-                fontWeight: 800,
-                margin: "0 0 8px",
-                letterSpacing: -1,
-              }}
+              color: "#fff",
+              fontSize: 40,
+              fontWeight: 800,
+              margin: "0 0 8px",
+              letterSpacing: -1,
+           }}
             >
-              3 Word Pin Live
+              3 Word Pin Livestream Reality Show
             </h1>
             <p
               style={{
