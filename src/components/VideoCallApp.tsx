@@ -1072,7 +1072,7 @@ export default function VideoCallApp({
                 letterSpacing: -1,
               }}
             >
-              ASK Hahz Live
+              3 Word Pin Live
             </h1>
             <p
               style={{
@@ -1081,7 +1081,7 @@ export default function VideoCallApp({
                 margin: 0,
               }}
             >
-              1-on-1 or group mastermind consultations
+              Livestream shows mapped to <a href="https://3wordpin.com" target="_blank" rel="noopener noreferrer" style={{ color: "rgba(255,255,255,0.35)", textDecoration: "underline" }}>3 Word Pin</a> locations. Join a room to watch and chat with others.
             </p>
           </div>
 
@@ -1257,6 +1257,62 @@ export default function VideoCallApp({
               </a>
             </div>
           </div>
+
+          {/* ✅ Join Social button */}
+<a
+  href="https://social.3wordpin.com"
+  target="_blank"
+  rel="noopener noreferrer"
+  style={{
+    height: 44,
+    background: "rgba(255,255,255,0.05)",
+    border: "1px solid rgba(255,255,255,0.1)",
+    borderRadius: 14,
+    color: "rgba(255,255,255,0.7)",
+    fontSize: 13,
+    cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    transition: "all 0.2s",
+    fontFamily: "inherit",
+    width: "100%",
+    textDecoration: "none",
+    marginTop: 10,
+  }}
+>
+  <span style={{ fontSize: 16 }}>💬</span>
+  Join Social
+</a>
+
+{/* ✅ Find 3 Word Pin button */}
+<a
+  href="https://3wordpin.com"
+  target="_blank"
+  rel="noopener noreferrer"
+  style={{
+    height: 44,
+    background: "rgba(255,255,255,0.05)",
+    border: "1px solid rgba(255,255,255,0.1)",
+    borderRadius: 14,
+    color: "rgba(255,255,255,0.7)",
+    fontSize: 13,
+    cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    transition: "all 0.2s",
+    fontFamily: "inherit",
+    width: "100%",
+    textDecoration: "none",
+    marginTop: 10,
+  }}
+>
+  <span style={{ fontSize: 16 }}>📍</span>
+  Find 3 Word Pin
+</a>
 
           {/* Features strip */}
           <div
