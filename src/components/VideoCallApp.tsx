@@ -1082,9 +1082,9 @@ export default function VideoCallApp({ initialRoom = "", initialName = "" }: Vid
                 rel="noopener noreferrer"
                 style={{ color: "rgba(255,255,255,0.35)", textDecoration: "underline" }}
               >
-                3 Word Pin
+              Join a room   
               </a>{" "}
-              locations. Join a room to watch and chat with others.
+              to watch and chat with others.
             </p>
           </div>
 
