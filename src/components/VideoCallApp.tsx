@@ -1066,7 +1066,7 @@ export default function VideoCallApp({ initialRoom = "", initialName = "" }: Vid
                 letterSpacing: -1,
               }}
             >
-              3 Word Pin Livestream Reality Show
+              Livestream Reality Show
             </h1>
             <p
               style={{
