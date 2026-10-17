@@ -1066,7 +1066,7 @@ export default function VideoCallApp({ initialRoom = "", initialName = "" }: Vid
                 letterSpacing: -1,
               }}
             >
-              Livestream Reality Show
+              Livestream
             </h1>
             <p
               style={{
@@ -1075,16 +1075,16 @@ export default function VideoCallApp({ initialRoom = "", initialName = "" }: Vid
                 margin: 0,
               }}
             >
-              Livestream shows mapped to{" "}
+              Create a PPV Livestream {" "}
               <a
-                href="https://3wordpin.com"
+                href="https://lumeebooth.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{ color: "rgba(255,255,255,0.35)", textDecoration: "underline" }}
               >
-              Join a room   
+              Lumee Booth  
               </a>{" "}
-              to watch and chat with others.
+              event.
             </p>
           </div>
 
@@ -1260,7 +1260,7 @@ export default function VideoCallApp({ initialRoom = "", initialName = "" }: Vid
 
           {/* Join Social */}
           <a
-            href="https://social.3wordpin.com"
+            href="https://lumeebooth.com/social/"
             target="_blank"
             rel="noopener noreferrer"
             style={{
