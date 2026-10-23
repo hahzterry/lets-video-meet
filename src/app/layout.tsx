@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Live 3 Word Pin",
-  description: "Book A Livestream Mapped To A 3 Word Pin",
+  title: "Lumee Booth Livestream",
+  description: "Lumee Booth Livestream Ticket Events",
 };
 
 export default function RootLayout({
