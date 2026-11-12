@@ -1075,7 +1075,7 @@ export default function VideoCallApp({ initialRoom = "", initialName = "" }: Vid
                 margin: 0,
               }}
             >
-              Book a call to create a livestream.
+              Book a call to get the livestream room code.
             </p>
           </div>
 
