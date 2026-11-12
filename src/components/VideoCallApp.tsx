@@ -32,43 +32,76 @@ import {
   Calendar,
 } from "lucide-react";
 
-// ─── Livestream Icon ───────────────────────────────────────────────────────────
-const LivestreamIcon = ({ size = 32, color = "#fff" }: { size?: number; color?: string }) => (
+
+// ─── Professional Livestream Icon ────────────────────────────────────────────
+const LivestreamIcon = ({
+  size = 32,
+  color = "#fff",
+}: {
+  size?: number;
+  color?: string;
+}) => (
   <svg
     width={size}
     height={size}
-    viewBox="0 0 24 24"
+    viewBox="0 0 48 48"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
+    role="img"
+    aria-label="Livestream broadcast"
   >
+    {/* Professional broadcast camera */}
     <rect
-      x="2"
-      y="4"
-      width="16"
-      height="12"
-      rx="2"
+      x="5"
+      y="15"
+      width="27"
+      height="21"
+      rx="5"
+      stroke={color}
+      strokeWidth="2.8"
+    />
+
+    {/* Camera lens */}
+    <circle
+      cx="18.5"
+      cy="25.5"
+      r="6.5"
+      stroke={color}
+      strokeWidth="2.5"
+    />
+    <circle cx="18.5" cy="25.5" r="2.5" fill={color} />
+
+    {/* Camera side lens housing */}
+    <path
+      d="M32 21L42 16V35L32 30V21Z"
+      stroke={color}
+      strokeWidth="2.8"
+      strokeLinejoin="round"
+    />
+
+    {/* Live recording indicator */}
+    <circle cx="28" cy="12" r="4" fill="#FF4545" />
+    <circle
+      cx="28"
+      cy="12"
+      r="6"
+      stroke="#FF4545"
+      strokeOpacity="0.3"
+    />
+
+    {/* Broadcast signal */}
+    <path
+      d="M37 7C40 9 42 12 43 15"
+      stroke={color}
+      strokeWidth="2.3"
+      strokeLinecap="round"
+    />
+    <path
+      d="M39 3C43 6 46 10 47 14"
       stroke={color}
       strokeWidth="2"
       strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <line x1="6" y1="18" x2="14" y2="18" stroke={color} strokeWidth="2" strokeLinecap="round" />
-    <line x1="8" y1="20" x2="12" y2="20" stroke={color} strokeWidth="2" strokeLinecap="round" />
-    <polygon points="8.5,7.5 8.5,12.5 12.5,10" fill={color} fillOpacity="0.9" />
-    <circle cx="14" cy="6" r="2" fill="#ef4444" />
-    <path
-      d="M18 3C19.5 4.5 20.5 6.5 20.5 9"
-      stroke={color}
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeOpacity="0.4"
-    />
-    <path
-      d="M19.5 5.5C20.5 6.5 21 8 21 9.5"
-      stroke={color}
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeOpacity="0.2"
+      strokeOpacity="0.5"
     />
   </svg>
 );
