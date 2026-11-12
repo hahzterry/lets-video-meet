@@ -1075,16 +1075,7 @@ export default function VideoCallApp({ initialRoom = "", initialName = "" }: Vid
                 margin: 0,
               }}
             >
-              Create a PPV Livestream {" "}
-              <a
-                href="https://lumeebooth.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ color: "rgba(255,255,255,0.35)", textDecoration: "underline" }}
-              >
-              Lumee Booth  
-              </a>{" "}
-              event.
+              Book a call to create a livestream.
             </p>
           </div>
 
@@ -1257,34 +1248,6 @@ export default function VideoCallApp({ initialRoom = "", initialName = "" }: Vid
               </a>
             </div>
           </div>
-
-          {/* Join Social */}
-          <a
-            href="https://lumeebooth.com/social/"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              height: 44,
-              background: "rgba(255,255,255,0.05)",
-              border: "1px solid rgba(255,255,255,0.1)",
-              borderRadius: 14,
-              color: "rgba(255,255,255,0.7)",
-              fontSize: 13,
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 8,
-              transition: "all 0.2s",
-              fontFamily: "inherit",
-              width: "100%",
-              textDecoration: "none",
-              marginTop: 10,
-            }}
-          >
-            <span style={{ fontSize: 16 }}>💬</span>
-            Join Social
-          </a>
 
           {/* Find 3 Word Pin */}
           <a
