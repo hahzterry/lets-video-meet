@@ -1255,7 +1255,7 @@ export default function VideoCallApp({ initialRoom = "", initialName = "" }: Vid
               )}
 
               <a
-                href="https://cal.com/3wordpin"
+                href="https://cal.com/livebooking"
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
@@ -1277,7 +1277,7 @@ export default function VideoCallApp({ initialRoom = "", initialName = "" }: Vid
                 }}
               >
                 <Calendar size={14} />
-                Book a Call
+                Book a Livestream Event
               </a>
             </div>
           </div>
